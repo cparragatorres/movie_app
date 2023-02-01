@@ -1,6 +1,10 @@
 import 'dart:convert';
 
+import 'package:app_movie/models/movie_models.dart';
+import 'package:app_movie/services/api_services.dart';
+import 'package:app_movie/ui/widgets/item_movie_list_widget.dart';
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
@@ -12,51 +16,47 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List movies = [];
+  List<MovieModel> moviesList = [];
+
+  APIServices _apiServices = APIServices();
 
   @override
   void initState() {
     super.initState();
-    getMovies();
+    getData()
+    ;
   }
 
-  getMovies() async {
-    Uri _uri = Uri.parse(
-      "https://api.themoviedb.org/3/discover/movie?api_key=b023410500aafb2c79fe3179a1da5f64",
-    );
-    http.Response response = await http.get(_uri);
-    if (response.statusCode == 200) {
-      // print(response.body);
-      Map<String, dynamic> myMap = json.decode(response.body);
-      movies = myMap["results"];
-      setState(() {});
-    }
+  getData()async{
+    moviesList = await _apiServices.getMovies();
+    setState(() {
+
+    });
+
   }
+
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+
 
     return Scaffold(
+      backgroundColor: Color(0xff161823),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListView.builder(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 14.0),
+          child: Column(
+            children: [
+              ListView.builder(
                 shrinkWrap: true,
                 physics: BouncingScrollPhysics(),
-                itemCount: movies.length,
+                itemCount: moviesList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    width: double.infinity,
-                    height: height * 0.7,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                      image: NetworkImage(
-                        "https://image.tmdb.org/t/p/w500${movies[index]["poster_path"]}",
-                      ),
-                    )),
-                  );
-                }),
-          ],
+                  return ItemMovieListWidget(movieModel: moviesList[index],);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

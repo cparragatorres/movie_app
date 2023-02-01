@@ -19,7 +19,9 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.manropeTextTheme(),
       ),
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: HomePage(
+
+      ),
     );
   }
 }
